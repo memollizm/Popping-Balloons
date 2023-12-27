@@ -192,11 +192,11 @@ title_label.pack(pady=20)
 play_button = Button(main_menu, text="Oyna", command=start_game, width=30, height=2, font=("Helvetica", 12))
 leaderboard_button = Button(main_menu, text="Meydan Okuma", command=open_leaderboard, width=30, height=2, font=("Helvetica", 12))
 store_button = Button(main_menu, text="Mağaza", command=open_store, width=30, height=2, font=("Helvetica", 12))
-settings_button = Button(main_menu, text="Ayarlar", command=open_settings, width=30, height=2, font=("Helvetica", 12))
+
 
 play_button.pack(pady=10)
 leaderboard_button.pack(pady=10)
 store_button.pack(pady=10)
-settings_button.pack(pady=10)
+
 
 main_menu.mainloop()

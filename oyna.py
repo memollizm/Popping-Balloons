@@ -27,6 +27,7 @@ player_width, player_height = 50, 50
 player_x = (screen_width - player_width) // 2
 player_y = screen_height - player_height
 player_speed = 5
+player_speed = balloon_speed * 2
 player_color = (255, 165, 0)
 
 # Zıplama özellikleri
