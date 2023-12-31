@@ -1,32 +1,17 @@
 import pygame
 import random
 import tkinter as tk
-from tkinter import ttk
-
-from tkinter import Label, Button
-
-from IPython.terminal.pt_inputhooks import tk
-"""
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("Ana Menü")
-        self.root.geometry("800x600")
-"""
+from tkinter import Button, Label, ttk
 
 class MeydanOkuma:
-    def __init__(self, root, start_game_callback):
+    def __init__(self, root):
         self.root = root
-        self.root.geometry("800x600")
-        self.start_game_callback = start_game_callback
 
-        self.title_label = Label(self.root, text="Meydan Okuma", font=("Helvetica", 20))
+        self.title_label = Label(self.root, text="Mağaza", font=("Helvetica", 20))
         self.title_label.pack(pady=20)
 
         self.back_button = Button(self.root, text="Geri Dön", command=self.go_back, width=20, height=2, font=("Helvetica", 12))
         self.back_button.pack(pady=10)
-        self.start_game()
-        self.close_menu()
-        self.show_game_over_screen()
 
     def go_back(self):
         self.root.destroy()
@@ -43,7 +28,7 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 # Renkler
-WHITE = (255, 255, 255)
+color = (255, 255, 255)
 
 # Oyun özellikleri
 FPS = 60
@@ -53,7 +38,8 @@ BALLOON_SIZE = 50
 PLAYER_SIZE = 50
 
 # Ses efektleri
-pop_sound = pygame.mixer.Sound("ses/yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
+pygame.mixer.init()
+pop_sound = pygame.mixer.Sound("ses\yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
 
 # Oyun değişkenleri
 player_x = SCREEN_WIDTH // 2
@@ -91,7 +77,7 @@ def close_menu():
     root.destroy()
 
 def show_game_over_screen():
-    screen.fill(WHITE)
+    screen.fill(color)
     font = pygame.font.Font(None, 72)
     game_over_text = font.render("Oyun Bitti!", True, (255, 0, 0))
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
@@ -102,10 +88,10 @@ def show_game_over_screen():
 
 # Tkinter menüsü
 root = tk.Tk()
-root.title("Balloon Pop Menu")
-root.geometry("400x300")
+root.title("Popping-Balloons")
+root.geometry("800x600")
 
-title_label = ttk.Label(root, text="Balloon Pop Game", font=("Helvetica", 20))
+title_label = ttk.Label(root, text="Meydan Okuma", font=("Helvetica", 20))
 title_label.pack(pady=20)
 
 button_frame = ttk.Frame(root)
@@ -129,6 +115,7 @@ pygame.display.set_caption("Balloon Pop")
 
 clock = pygame.time.Clock()
 
+"""
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -186,3 +173,70 @@ while True:
 
     pygame.display.flip()
     clock.tick(FPS)
+"""
+def main_game_loop():
+    global player_x, player_y, is_jumping, jump_count, balloon_x, balloon_y, score, time_left, running
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        if running:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and player_x > 0:
+                player_x -= PLAYER_SPEED
+            if keys[pygame.K_RIGHT] and player_x < SCREEN_WIDTH - PLAYER_SIZE:
+                player_x += PLAYER_SPEED
+
+            if keys[pygame.K_SPACE]:
+                is_jumping = True
+
+            if is_jumping:
+                if jump_count >= -10:
+                    neg = 1 if jump_count > 0 else -1
+                    player_y -= (jump_count ** 2) * 0.5 * neg
+                    jump_count -= 1
+                else:
+                    is_jumping = False
+                    jump_count = 10
+
+            balloon_y += BALLOON_SPEED
+            if balloon_y > SCREEN_HEIGHT:
+                balloon_x = random.randint(0, SCREEN_WIDTH - BALLOON_SIZE)
+                balloon_y = 0
+
+            # Çarpışma kontrolü
+            if (
+                player_x - BALLOON_SIZE < balloon_x < player_x + PLAYER_SIZE
+                and player_y - BALLOON_SIZE < balloon_y < player_y + PLAYER_SIZE
+            ):
+                balloon_x = random.randint(0, SCREEN_WIDTH - BALLOON_SIZE)
+                balloon_y = 0
+                score += 1
+                pop_sound.play()
+
+            screen.fill((255, 255, 255))
+            pygame.draw.rect(screen, (0, 128, 255), (player_x, player_y, PLAYER_SIZE, PLAYER_SIZE))
+            pygame.draw.circle(screen, (255, 0, 0), (balloon_x, balloon_y), BALLOON_SIZE)
+
+            font = pygame.font.Font(None, 36)
+            score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+            time_text = font.render(f"Time Left: {int(time_left)}", True, (0, 0, 0))
+            screen.blit(score_text, (10, 10))
+            screen.blit(time_text, (SCREEN_WIDTH - 200, 10))
+
+            time_left -= 1 / FPS
+            if time_left <= 0:
+                running = False
+                show_game_over_screen()
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+
+#def meydan_okuma_baslat():
+
+#main_game_loop()

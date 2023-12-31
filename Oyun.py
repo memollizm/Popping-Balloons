@@ -1,27 +1,29 @@
-from random import random
-
+import random
+from tkinter import Button, Tk
+import tkinter as tk
 import pygame
 
+#pygame.mixer.init()
 
 class Oyun:
     def __init__(self, screen_width, screen_height):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.screen = pygame.display.set_mode((screen_width, screen_height))
-        self.normalBalon_sound = pygame.mixer.Sound("ses/yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
         pygame.display.set_caption("Popping Balloons")
+        
 
-        self.white = (255, 255, 255)
+        self.color = (0, 128, 128)
         self.balloon_radius = 30
         self.balloon_speed = 3
-        self.balloon_color = (0, 206, 119)
+        self.balloon_color = (255, 192, 0,)
 
         self.player_width, self.player_height = 50, 50
         self.player_x = (screen_width - self.player_width) // 2
         self.player_y = screen_height - self.player_height
         self.player_speed = 5
         self.player_speed = self.balloon_speed * 2
-        self.player_color = (255, 165, 0)
+        self.player_color = (255, 248, 220)
 
         self.jumping = False
         self.jump_count = 10
@@ -34,11 +36,18 @@ class Oyun:
 
         self.speed_increase_threshold = 5
 
+        pygame.mixer.init()
         self.normalBalon_sound = pygame.mixer.Sound("ses/yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
         self.siyahBalon_sound = pygame.mixer.Sound("ses/yt5s.io - Breaking glass sound effect (320 kbps).mp3")
+        
 
         self.running = True
         self.clock = pygame.time.Clock()
+
+        
+        #------------GERİ DÖNÜŞ BUTON-------------------------------------------------------------------------------------------------------------
+        #self.geriDonus = tk.Button(self, text="Geri", command = ana_menuye_don)
+        #self.geriDonus.pack(pady = 20)
 
     def generate_special_balloon(self):
         balloon_x = random.randint(0, self.screen_width - self.balloon_radius * 2)
@@ -53,6 +62,10 @@ class Oyun:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:  # Kullanıcı Escape tuşuna bastığında
+                        self.running = False
+                        self.show_main_menu()
 
             keys = pygame.key.get_pressed()
             if keys[pygame.K_LEFT] and self.player_x > 0:
@@ -121,7 +134,7 @@ class Oyun:
                     elif special_balloon[2] == "pink":
                         self.score += 10
 
-            self.screen.fill(self.white)
+            self.screen.fill(self.color)
 
             for balloon in self.balloons:
                 pygame.draw.circle(self.screen, self.balloon_color, (balloon[0], balloon[1]), self.balloon_radius)
@@ -134,11 +147,30 @@ class Oyun:
 
             pygame.draw.rect(self.screen, self.player_color, (self.player_x, self.player_y, self.player_width, self.player_height))
 
-            font = pygame.font.Font(None, 36)
-            text = font.render(f"Puan: {self.score}", True, (0, 0, 0))
+            pygame.font.init()
+            font = pygame.font.Font(None, 40)
+            text = font.render(f"Puan: {self.score}", True, (248, 248, 255))
             self.screen.blit(text, (10, 10))
-
+            
             pygame.display.flip()
             self.clock.tick(60)
 
         pygame.quit()
+
+"""   
+def show_main_menu():
+     self.root.destroy()  # Oyun penceresini kapat
+     self.root.deiconify()  # Ana menü penceresini tekrar göster
+     self.root.withdraw()  # Oyun penceresini gizle
+     ana_menu = AnaMenu(self.root)
+
+
+if __name__ == "__main__":
+ana_menu = AnaMenu()
+ana_menu.root.mainloop()
+
+def go_back(self):
+    self.root.destroy()
+"""
+    
+
