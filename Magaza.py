@@ -1,29 +1,18 @@
 import tkinter as tk
 from tkinter import Button, Label, messagebox
 
-class UserPage:
-    def __init__(self, master, user_balance):
+class StorePage:
+    def __init__(self, master, user_balance, store_items):
         self.master = master
         self.user_balance = user_balance
-
-        self.create_widgets()
-
-    def create_widgets(self):
-        # Kullanıcı kutusunu oluştur
-        self.user_box = Label(self.master, text=f"Bakiye: {self.user_balance}", font=("Helvetica", 14), width=15, height=3)
-        self.user_box.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-
-class StorePage:
-    def __init__(self, master, user_page, store_items):
-        self.master = master
-        self.user_page = user_page
         self.store_items = store_items
 
         self.create_widgets()
 
     def create_widgets(self):
-        # Bakiye kutusunu altına al
-        self.user_page.user_box.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        # Bakiye kutusunu üstte oluştur
+        self.balance_label = Label(self.master, text=f"Bakiye: {self.user_balance}", font=("Helvetica", 14), width=15, height=3)
+        self.balance_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         # Renk paleti
         color_palette = ["#FF5733", "#FFD700", "#33FF57", "#3399FF", "#9966FF", "#FF33FF"]
@@ -54,54 +43,41 @@ class StorePage:
             row_counter += 1
 
     def buy_item(self, item_price, difficulty):
-        if self.user_page.user_balance >= item_price:
-            self.user_page.user_balance -= item_price
-            self.user_page.user_box.config(text=f"Bakiye: {self.user_page.user_balance}")
+        if self.user_balance >= item_price:
+            self.user_balance -= item_price
+            self.balance_label.config(text=f"Bakiye: {self.user_balance}")
 
             difficulty_level = "Kolay" if difficulty == 1 else ("Orta" if difficulty == 2 else "Zor")
             success_message = f"BAŞARIYLA SATIN ALINDI! \n"\
                               f"SATIN ALINAN NESNENİN PUANI: {item_price}\n"\
                               f"ZORLUK SEVİYESİ: {difficulty_level}\n"\
-                              f"KALAN BAKİYE: {self.user_page.user_balance}"
+                              f"KALAN BAKİYE: {self.user_balance}"
 
             messagebox.showinfo("BAŞARI", success_message)
         else:
             messagebox.showerror("HATA", "YETERSİZ BAKİYE! DAHA FAZLA PUAN KAZANIN...")
 
-class Application:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("ANA MENÜ")
-        self.root.geometry("600x500")
-
-        # Mağaza butonunu ekleyin ve tıklandığında mağaza sayfasını açın
-        store_button = Button(self.root, text="Mağaza", command=self.open_store, width=20, height=2, font=("Helvetica", 12))
-        store_button.grid(row=1, column=0, padx=10, pady=10)
-
-        # Kullanıcı sayfası oluştur
-        self.user_page = UserPage(self.root, user_balance=100)
-
-        # Pencereyi sabitle
-        self.root.resizable(False, False)
-
-    def open_store(self):
-        store_window = tk.Toplevel(self.root)
-        store_window.title("MAĞAZA")
-        store_window.geometry("600x500")
-
-        # Mağaza nesnelerini belirle (örnek olarak)
-        store_items = {
-            "Nesne 1": (20, 1),
-            "Nesne 2": (30, 2),
-            "Nesne 3": (15, 3)
-        }
-
-        # Mağaza sayfasını oluştur
-        store_page = StorePage(store_window, self.user_page, store_items)
-
 def main():
     root = tk.Tk()
-    app = Application(root)
+    root.title("MAĞAZA")
+    root.geometry("600x500")
+
+    # Mağaza nesnelerini belirle (örnek olarak)
+    store_items = {
+        "Nesne 1": (20, 1),
+        "Nesne 2": (30, 2),
+        "Nesne 3": (15, 3)
+    }
+
+    # Kullanıcı bakiyesini belirle
+    user_balance = 100
+
+    # Mağaza sayfasını oluştur
+    store_page = StorePage(root, user_balance, store_items)
+
+    # Pencereyi sabitle
+    root.resizable(False, False)
+
     root.mainloop()
 
 if __name__ == "__main__":
