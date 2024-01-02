@@ -2,8 +2,11 @@ import random
 from tkinter import Button, Tk
 import tkinter as tk
 import pygame
+from soundManager import SoundManager
 
-#pygame.mixer.init()
+#Sesi kontrol etmek için kullanılan Singleton Tasarım Sınıfının nesnesi
+sound_manager = SoundManager()
+
 
 class Oyun:
     def __init__(self, screen_width, screen_height):
@@ -35,19 +38,9 @@ class Oyun:
         self.popped_balloons = 0
 
         self.speed_increase_threshold = 5
-
-        pygame.mixer.init()
-        self.normalBalon_sound = pygame.mixer.Sound("ses/yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
-        self.siyahBalon_sound = pygame.mixer.Sound("ses/yt5s.io - Breaking glass sound effect (320 kbps).mp3")
-        
-
+       
         self.running = True
         self.clock = pygame.time.Clock()
-
-        
-        #------------GERİ DÖNÜŞ BUTON-------------------------------------------------------------------------------------------------------------
-        #self.geriDonus = tk.Button(self, text="Geri", command = ana_menuye_don)
-        #self.geriDonus.pack(pady = 20)
 
     def generate_special_balloon(self):
         balloon_x = random.randint(0, self.screen_width - self.balloon_radius * 2)
@@ -118,7 +111,7 @@ class Oyun:
                     self.balloons.remove(balloon)
                     self.score += 1
                     self.popped_balloons += 1
-                    self.normalBalon_sound.play()
+                    sound_manager.play_normal_balloon_sound()
 
             for special_balloon in self.special_balloons:
                 if (
@@ -127,7 +120,7 @@ class Oyun:
                     and self.player_y < special_balloon[1] + self.balloon_radius
                     and self.player_y + self.player_height > special_balloon[1]
                 ):
-                    self.siyahBalon_sound.play()
+                    sound_manager.play_black_balloon_sound()
                     self.special_balloons.remove(special_balloon)
                     if special_balloon[2] == "black":
                         self.score += -5
@@ -156,21 +149,3 @@ class Oyun:
             self.clock.tick(60)
 
         pygame.quit()
-
-"""   
-def show_main_menu():
-     self.root.destroy()  # Oyun penceresini kapat
-     self.root.deiconify()  # Ana menü penceresini tekrar göster
-     self.root.withdraw()  # Oyun penceresini gizle
-     ana_menu = AnaMenu(self.root)
-
-
-if __name__ == "__main__":
-ana_menu = AnaMenu()
-ana_menu.root.mainloop()
-
-def go_back(self):
-    self.root.destroy()
-"""
-    
-

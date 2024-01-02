@@ -1,76 +1,84 @@
 import tkinter as tk
 from tkinter import Button, Label, messagebox
 
-# Global oyuncu bakiyesi
-player_balance = 100  # Örnek olarak başlangıç bakiyesi
+class StorePage:
+    def __init__(self, master, user_balance, store_items):
+        self.master = master
+        self.user_balance = user_balance
+        self.store_items = store_items
 
-class Magaza:
-    def __init__(self, screen_width, screen_height):
-        self.screen_width = screen_width
-        self.screen_height = screen_height
+        self.create_widgets()
 
-        self.title_label = Label(self.root, text="Mağaza", font=("Helvetica", 20))
-        self.title_label.pack(pady=20)
+    def create_widgets(self):
+        # Bakiye kutusunu üstte oluştur
+        self.balance_label = Label(self.master, text=f"Bakiye: {self.user_balance}", font=("Helvetica", 14), width=15, height=3)
+        self.balance_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
-        self.back_button = Button(self.root, text="Geri Dön", command=self.go_back, width=20, height=2, font=("Helvetica", 12))
-        self.back_button.pack(pady=10)
+        # Renk paleti
+        color_palette = ["#FF5733", "#FFD700", "#33FF57", "#3399FF", "#9966FF", "#FF33FF"]
 
-    def go_back(self):
-        self.root.destroy()
+        # Mağaza nesnelerini sırala
+        row_counter = 1
+        sorted_items = sorted(self.store_items.items(), key=lambda x: x[1][1])
 
-def open_store():
-     store_window = tk.Toplevel(main_menu)
-     store_window.title("Mağaza")
-     store_window.geometry("400x200")
+        for (item_name, item_info), color in zip(sorted_items, color_palette):
+            item_price, difficulty = item_info
 
-     # Bakiye etiketi
-     balance_label = Label(store_window, text=f"Oyuncu Bakiyesi: {player_balance}", font=("Helvetica", 14))
-     balance_label.pack(pady=10)
+            item_button = tk.Button(self.master, text=f"{item_price} Puan", command=lambda price=item_price: self.buy_item(price, difficulty), bg=color, width=10, height=3)
+            item_button.grid(row=row_counter, column=0, padx=5, pady=5, sticky="w")
+            row_counter += 1
 
-     # Altın balon satın alma düğmesi
-     buy_gold_balloon_button = Button(store_window, text="Altın Satın Al (50 Puan)", command=buy_gold_balloon)
-     buy_gold_balloon_button.pack(pady=5)
+        # Daha fazla nesne butonları
+        more_items = {
+            "Nesne 4": (25, 2),
+            "Nesne 5": (40, 3),
+            "Nesne 6": (15, 1)
+        }
 
-     # Güçlendirme satın alma düğmesi
-     buy_power_up_button = Button(store_window, text="Güçlendirme Satın Al (30 Puan)", command=buy_power_up)
-     buy_power_up_button.pack(pady=5)
+        for (item_name, item_info), color in zip(more_items.items(), color_palette):
+            item_price, difficulty = item_info
 
-def buy_gold_balloon():
-    global player_balance
-    gold_balloon_price = 50  # Altın balon fiyatı (örnek olarak)
+            item_button = tk.Button(self.master, text=f"{item_price} Puan", command=lambda price=item_price: self.buy_item(price, difficulty), bg=color, width=10, height=3)
+            item_button.grid(row=row_counter, column=0, padx=5, pady=5, sticky="w")
+            row_counter += 1
 
-    if player_balance >= gold_balloon_price:
-        player_balance -= gold_balloon_price
-        # Altın balonu envantere eklemek için gerekli kodları buraya ekleyebilirsiniz.
-        show_confirmation_message("Altın satın alındı!")
-    else:
-        show_error_message("Yetersiz bakiye! Altın satın almak için daha fazla puan kazanın")
+    def buy_item(self, item_price, difficulty):
+        if self.user_balance >= item_price:
+            self.user_balance -= item_price
+            self.balance_label.config(text=f"Bakiye: {self.user_balance}")
 
-def buy_power_up():
-    global player_balance
-    power_up_price = 30  # Güçlendirme fiyatı (örnek olarak)
+            difficulty_level = "Kolay" if difficulty == 1 else ("Orta" if difficulty == 2 else "Zor")
+            success_message = f"BAŞARIYLA SATIN ALINDI! \n"\
+                              f"SATIN ALINAN NESNENİN PUANI: {item_price}\n"\
+                              f"ZORLUK SEVİYESİ: {difficulty_level}\n"\
+                              f"KALAN BAKİYE: {self.user_balance}"
 
-    if player_balance >= power_up_price:
-        player_balance -= power_up_price
-        # Güçlendirmeyi uygulamak veya envantere eklemek için gerekli kodları buraya ekleyebilirsiniz.
-        show_confirmation_message("Güçlendirme satın alındı!")
-    else:
-        show_error_message("Yetersiz bakiye! Güçlendirme satın almak için daha fazla puan kazanın")
+            messagebox.showinfo("BAŞARILI", success_message)
+        else:
+            messagebox.showerror("HATA", "YETERSİZ BAKİYE! DAHA FAZLA PUAN KAZANIN...")
 
-def show_confirmation_message(message):
-    messagebox.showinfo("Onay", message)
+def main():
+    root = tk.Tk()
+    root.title("MAĞAZA")
+    root.geometry("600x500")
 
-def show_error_message(message):
-    messagebox.showerror("Hata", message)
+    # Mağaza nesnelerini belirle (örnek olarak)
+    store_items = {
+        "Nesne 1": (20, 1),
+        "Nesne 2": (30, 2),
+        "Nesne 3": (15, 3)
+    }
 
-# Ana menü oluşturma
-main_menu = tk.Tk()
-main_menu.title("Popping Balloons")
-main_menu.geometry("800x600")
+    # Kullanıcı bakiyesini belirle
+    user_balance = 100
 
-# Mağaza düğmesi
-store_button = Button(main_menu, text="Mağaza", command=open_store, width=30, height=2, font=("Helvetica", 12))
-store_button.pack(pady=10)
+    # Mağaza sayfasını oluştur
+    store_page = StorePage(root, user_balance, store_items)
 
-#Ana menüyü başlatma
-main_menu.mainloop()
+    # Pencereyi sabitle
+    root.resizable(False, False)
+
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
