@@ -53,7 +53,11 @@ class StorePage:
                               f"ZORLUK SEVİYESİ: {difficulty_level}\n"\
                               f"KALAN BAKİYE: {self.user_balance}"
 
+<<<<<<< HEAD
             messagebox.showinfo("BAŞARILI", success_message)
+=======
+            messagebox.showinfo("BAŞARI", success_message)
+>>>>>>> d4bfbc452789b643072d5fcf4ed35d1deb3cf140
         else:
             messagebox.showerror("HATA", "YETERSİZ BAKİYE! DAHA FAZLA PUAN KAZANIN...")
 
