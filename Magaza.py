@@ -1,17 +1,44 @@
 import tkinter as tk
 from tkinter import Button, Label, messagebox
 
-class StorePage:
-    def __init__(self, master, user_balance, store_items):
+class BalanceObserver:
+    def update_balance(self, new_balance):
+        pass
+
+class Wallet:
+    def __init__(self, initial_balance):
+        self.balance = initial_balance
+
+    def get_balance(self):
+        return self.balance
+
+    def update_balance(self, amount):
+        self.balance += amount
+
+class StorePage(tk.Frame, BalanceObserver):
+    def __init__(self, master, wallet, store_items):
         self.master = master
-        self.user_balance = user_balance
+        self.wallet = wallet
         self.store_items = store_items
+        self.observers = []
 
         self.create_widgets()
 
+    def add_observer(self, observer):
+        self.observers.append(observer)
+
+    def notify_observers(self):
+        for observer in self.observers:
+            observer.update_balance(self.wallet.get_balance())
+
+    def update_balance(self, new_balance):
+        self.wallet.update_balance(new_balance)
+        self.balance_label.config(text=f"Bakiye: {self.wallet.get_balance()}")
+        self.notify_observers()
+
     def create_widgets(self):
         # Bakiye kutusunu üstte oluştur
-        self.balance_label = Label(self.master, text=f"Bakiye: {self.user_balance}", font=("Helvetica", 14), width=15, height=3)
+        self.balance_label = Label(self.master, text=f"Bakiye: {self.wallet.get_balance()}", font=("Helvetica", 14), width=15, height=3)
         self.balance_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         # Renk paleti
@@ -32,7 +59,10 @@ class StorePage:
         more_items = {
             "Nesne 4": (25, 2),
             "Nesne 5": (40, 3),
-            "Nesne 6": (15, 1)
+            "Nesne 6": (15, 1),
+            "Nesne 7": (30, 2),
+            "Nesne 8": (20, 1),
+            "Nesne 9": (35, 3)
         }
 
         for (item_name, item_info), color in zip(more_items.items(), color_palette):
@@ -43,28 +73,27 @@ class StorePage:
             row_counter += 1
 
     def buy_item(self, item_price, difficulty):
-        if self.user_balance >= item_price:
-            self.user_balance -= item_price
-            self.balance_label.config(text=f"Bakiye: {self.user_balance}")
+        if self.wallet.get_balance() >= item_price:
+            self.wallet.update_balance(-item_price)
+            self.balance_label.config(text=f"Bakiye: {self.wallet.get_balance()}")
 
             difficulty_level = "Kolay" if difficulty == 1 else ("Orta" if difficulty == 2 else "Zor")
             success_message = f"BAŞARIYLA SATIN ALINDI! \n"\
                               f"SATIN ALINAN NESNENİN PUANI: {item_price}\n"\
                               f"ZORLUK SEVİYESİ: {difficulty_level}\n"\
-                              f"KALAN BAKİYE: {self.user_balance}"
+                              f"KALAN BAKİYE: {self.wallet.get_balance()}"
 
-<<<<<<< HEAD
-            messagebox.showinfo("BAŞARILI", success_message)
-=======
             messagebox.showinfo("BAŞARI", success_message)
->>>>>>> d4bfbc452789b643072d5fcf4ed35d1deb3cf140
         else:
             messagebox.showerror("HATA", "YETERSİZ BAKİYE! DAHA FAZLA PUAN KAZANIN...")
 
 def main():
     root = tk.Tk()
     root.title("MAĞAZA")
-    root.geometry("600x500")
+    root.geometry("600x550")
+
+    # Cüzdanı oluştur
+    user_wallet = Wallet(initial_balance=100)
 
     # Mağaza nesnelerini belirle (örnek olarak)
     store_items = {
@@ -73,11 +102,8 @@ def main():
         "Nesne 3": (15, 3)
     }
 
-    # Kullanıcı bakiyesini belirle
-    user_balance = 100
-
     # Mağaza sayfasını oluştur
-    store_page = StorePage(root, user_balance, store_items)
+    store_page = StorePage(root, user_wallet, store_items)
 
     # Pencereyi sabitle
     root.resizable(False, False)
@@ -86,3 +112,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#Gözlemci (Observer) tasarım deseni kullaılmıştır. 
+# Kullanıcının cüzdan bakiyesindeki herhangi bir değişikliği takip etmek isteyen nesneleri (gözlemcileri) mağaza sayfasına eklemek ve bu değişiklikleri anında almak için kullanılır.
