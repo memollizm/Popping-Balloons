@@ -1,18 +1,16 @@
+import os
 import sys
 from tkinter import Button, Label, font
-from tkinter import *
+import tkinter as tk
 
 
 from IPython.terminal.pt_inputhooks import tk
 
 from Oyun import Oyun
 from gpt import  *
-#from Oyun import *
-from Arayuz import Arayuz
+from Magaza import run_store
+from MeydanOkuma import *
 
-
-#from Magaza import *
-from MeydanOkuma import * 
 
 class AnaMenu:
     def __init__(self):
@@ -44,22 +42,17 @@ class AnaMenu:
 
     def start_game(self):
         self.root.destroy()
-        self.main_loop()
         oyun = Oyun(800, 600)
         oyun.main_loop()
 
     def open_meydan_okuma(self):
-        self.root.destroy()
         self.main_loop()
         meydan_okuma = MeydanOkuma(800,600, 30)
-        meydan_okuma.main_loop()          
+        meydan_okuma.main_loop()  
     
-
     def open_magaza(self):
-        self.root.destroy()
-        self.magaza_baslatma()
-        magaza_root = tk.Toplevel(self.root)
-        magaza = meydan_Okuma(magaza_root)
+     self.root.destroy()
+     run_store()
 
 
     def main_loop(self):

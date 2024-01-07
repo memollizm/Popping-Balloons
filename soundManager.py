@@ -9,6 +9,7 @@ class SoundManager:
             pygame.mixer.init()
             cls._instance.normal_balloon_sound = pygame.mixer.Sound("ses/yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
             cls._instance.black_balloon_sound = pygame.mixer.Sound("ses/yt5s.io - Breaking glass sound effect (320 kbps).mp3")
+            cls._instance.pink_balloon_sound = pygame.mixer.Sound("ses/Mario Coin - Free Sound Effect.mp3")
         return cls._instance
 
     def play_normal_balloon_sound(self):
@@ -16,6 +17,9 @@ class SoundManager:
 
     def play_black_balloon_sound(self):
         self.black_balloon_sound.play()
+
+    def play_pink_balloon_sound(self):
+        self.pink_balloon_sound.play()
 
 """
 Bu sınıfta Singleton tasarım deseni kullanılmıştır.
