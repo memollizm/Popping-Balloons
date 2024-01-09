@@ -1,12 +1,14 @@
 import os
 import sys
 from tkinter import Button, Label, font
+import pygame
 import tkinter as tk
+from tkinter import Button, Label
 
 from IPython.terminal.pt_inputhooks import tk
 
 from Oyun import Oyun
-from gpt import  *
+
 from Magaza import run_store
 from MeydanOkuma import *
 from Oyun import score 
