@@ -10,7 +10,7 @@ class SoundManager:
             cls._instance.normal_balloon_sound = pygame.mixer.Sound("ses/yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
             cls._instance.black_balloon_sound = pygame.mixer.Sound("ses/yt5s.io - Breaking glass sound effect (320 kbps).mp3")
             cls._instance.pink_balloon_sound = pygame.mixer.Sound("ses/Mario Coin - Free Sound Effect.mp3")
-            cls._instance.ice_sound = pygame.mixer.Sound("ses\Ice Cracking - Sound Effect HD.mp3")
+            cls._instance.ice_sound = pygame.mixer.Sound("ses/Ice Cracking - Sound Effect HD.mp3")
         return cls._instance
 
     def play_normal_balloon_sound(self):

@@ -1,214 +1,78 @@
+import tkinter as tk
+from tkinter import messagebox
+
 import pygame
-import random
-import sys
+from BirinciSeviye import BirinciSeviye 
+from ikinciSeviye import IkinciSeviye
+from ucuncuSeviye import ücüncüSeviye
 
-class MeydanOkuma:
-    def __init__(self, screen_width, screen_height, game_duration):
-        pygame.init()
-
+class SeviyeStratejisi:
+    def __init__(self, root, screen_width, screen_height, game_duration):
+        self.root = root
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
-        pygame.display.set_caption("Meydan Oku")
-
-        self.color = (0, 128, 128)
-        self.balloon_radius = 30
-        self.balloon_speed = 3
-        self.balloon_color = (255, 192, 0)
-
-        self.player_width, self.player_height = 50, 50
-        self.player_x = (screen_width - self.player_width) // 2
-        self.player_y = screen_height - self.player_height
-        self.player_speed = 5
-        self.jumping = False
-        self.jump_count = 10
-
-        self.balloons = []
-        self.special_balloons = []
-
-        self.score = 0
-        self.popped_balloons = 0
-        self.black_balloons_popped = 0
-        self.pink_balloons_popped = 0
-
-        self.speed_increase_threshold = 5
         self.game_duration = game_duration
-        self.sure = game_duration
 
-        pygame.mixer.init()
-        self.normalBalon_sound = pygame.mixer.Sound("ses\\yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
-        self.siyahBalon_sound = pygame.mixer.Sound("ses\\yt5s.io - Breaking glass sound effect (320 kbps).mp3")
+    def baslat(self):
+        raise NotImplementedError("Alt sınıflar bu metodu uygulamalıdır.")
 
-        self.running = True
-        self.clock = pygame.time.Clock()
+class BirinciSeviyeStratejisi(SeviyeStratejisi):
+    def baslat(self):
+        birinci_seviye = BirinciSeviye(self.root, screen_width=self.screen_width, screen_height=self.screen_height, game_duration=self.game_duration)
+        birinci_seviye.main_loop()
 
-    def generate_special_balloon(self):
-        balloon_x = random.randint(0, self.screen_width - self.balloon_radius * 2)
-        balloon_y = 0
-        if len(self.special_balloons) % 30 == 0:
-            self.special_balloons.append([balloon_x, balloon_y, "black"])
-        elif len(self.special_balloons) % 20 == 0:
-            self.special_balloons.append([balloon_x, balloon_y, "pink"])
+class IkinciSeviyeStratejisi(SeviyeStratejisi):
+    def baslat(self):
+        ikinci_seviye = IkinciSeviye(self.root, screen_width=self.screen_width, screen_height=self.screen_height, game_duration=self.game_duration)
+        ikinci_seviye.main_loop()
 
-    def show_result_screen(self):
-        self.screen.fill((146, 125, 213))  # Ekranı siyah renge ayarla
+class UcuncuSeviyeStratejisi(SeviyeStratejisi):
+    def baslat(self):
+        ucuncu_seviye = ücüncüSeviye(self.root, screen_width=self.screen_width, screen_height=self.screen_height, game_duration=self.game_duration)
+        ucuncu_seviye.main_loop()
 
-        font = pygame.font.Font(None, 36)
+class MeydanOkumaMenu:
+    def __init__(self, screen_width, screen_height, game_duration): 
+        self.root = tk.Tk()
+        self.root.title("Meydan Okuma Menüsü")
+        self.root.geometry(f"{screen_width}x{screen_height}")
 
-        score_text = font.render(f"Toplam Balon: {self.popped_balloons}", True, (255, 255, 255))
-        score_rect = score_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 40))
+        self.label = tk.Label(self.root, text="Meydan Okuma Menüsü", font=("Arial", 20, "bold"), bg="#ffbf28")
+        self.label.pack(pady=20)
 
-        points_text = font.render(f"Toplam Puan: {self.score}", True, (255, 255, 255))
-        points_rect = points_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
+        self.game_duration = game_duration  
+        self.seviye_stratejisi = None
 
-        black_balloons_text = font.render(f"Siyah Balonlar: {self.black_balloons_popped}", True, (255, 255, 255))
-        black_balloons_rect = black_balloons_text.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 40))
+        self.root.configure(bg="#ffbf28")
 
-      
+        self.seviye_secim_ekrani()
 
-        self.screen.blit(score_text, score_rect)
-        self.screen.blit(points_text, points_rect)
-        self.screen.blit(black_balloons_text, black_balloons_rect)
-       
+    def seviye_secim_ekrani(self):
+        label = tk.Label(self.root, text="Seviye Seçimi", font=("Arial", 15, "bold "), bg="#ffbf28")
+        label.pack(pady=20)
 
-        pygame.display.flip()
+        seviye_frame = tk.Frame(self.root)
+        seviye_frame.pack(pady=10)
 
-        waiting = True
-        while waiting:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:  # Enter tuşuna basıldığında
-                        waiting = False  # Ekranı kapat
-                        self.reset_game()  # Oyunu sıfırla ve tekrar başlat
+        for seviye in range(1, 4):
+            buton = tk.Button(seviye_frame, text=f"Seviye {seviye}", command=lambda sev=seviye: self.seviye_secildi(sev),
+                  borderwidth=2, relief="solid", font=("Arial", 12, "bold"), width=10, height=2, bg="#008080", fg="#ffbf28")
 
-    def reset_game(self):
-        self.popped_balloons = 0
-        self.black_balloons_popped = 0
-        self.pink_balloons_popped = 0
-        self.score = 0
-        self.balloon_speed = 3
-        self.speed_increase_threshold = 5
-        self.balloons = []
-        self.special_balloons = []
-        self.sure = self.game_duration
-        self.clock.tick(60)
+            buton.grid(row=0, column=seviye-1, padx=10)
 
-    def main_loop(self):
-        while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.running = False
-                        self.show_result_screen()
+    def seviye_secildi(self, secilen_seviye):
+        messagebox.showinfo("Seviye Seçimi", f"Seviye {secilen_seviye} seçildi.")
 
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and self.player_x > 0:
-                self.player_x -= self.player_speed
-            if keys[pygame.K_RIGHT] and self.player_x < self.screen_width - self.player_width:
-                self.player_x += self.player_speed
+        if secilen_seviye == 1:
+            self.seviye_stratejisi = BirinciSeviyeStratejisi(self.root, screen_width=800, screen_height=600, game_duration=40)
+        elif secilen_seviye == 2:
+            self.seviye_stratejisi = IkinciSeviyeStratejisi(self.root, screen_width=800, screen_height=600,game_duration=40)
+        elif secilen_seviye == 3:
+            self.seviye_stratejisi = UcuncuSeviyeStratejisi(self.root, screen_width=800, screen_height=600,game_duration=40)
 
-            if not self.jumping:
-                if keys[pygame.K_SPACE]:
-                    self.jumping = True
-            else:
-                if self.jump_count >= -10:
-                    neg = 1
-                    if self.jump_count < 0:
-                        neg = -1
-                    self.player_y -= (self.jump_count ** 2) * 0.5 * neg
-                    self.jump_count -= 1
-                else:
-                    self.jumping = False
-                    self.jump_count = 10
+        if self.seviye_stratejisi:
+            self.seviye_stratejisi.baslat()
 
-            if len(self.balloons) < 5:
-                balloon_x = random.randint(0, self.screen_width - self.balloon_radius * 2)
-                balloon_y = 0
-                self.balloons.append([balloon_x, balloon_y])
-
-            self.generate_special_balloon()
-
-            if self.popped_balloons >= self.speed_increase_threshold:
-                self.balloon_speed += 0.1
-                self.speed_increase_threshold += 5
-
-            for balloon in self.balloons:
-                balloon[1] += self.balloon_speed
-                if balloon[1] > self.screen_height:
-                    self.balloons.remove(balloon)
-
-            for special_balloon in self.special_balloons:
-                special_balloon[1] += self.balloon_speed
-                if special_balloon[1] > self.screen_height:
-                    self.special_balloons.remove(special_balloon)
-
-            for balloon in self.balloons:
-                if (
-                    self.player_x < balloon[0] + self.balloon_radius
-                    and self.player_x + self.player_width > balloon[0]
-                    and self.player_y < balloon[1] + self.balloon_radius
-                    and self.player_y + self.player_height > balloon[1]
-                ):
-                    self.balloons.remove(balloon)
-                    self.score += 1
-                    self.popped_balloons += 1
-                    self.normalBalon_sound.play()
-
-            for special_balloon in self.special_balloons:
-                if (
-                    self.player_x < special_balloon[0] + self.balloon_radius
-                    and self.player_x + self.player_width > special_balloon[0]
-                    and self.player_y < special_balloon[1] + self.balloon_radius
-                    and self.player_y + self.player_height > special_balloon[1]
-                ):
-                    self.siyahBalon_sound.play()
-                    self.special_balloons.remove(special_balloon)
-                    if special_balloon[2] == "black":
-                        self.score += -5
-                        self.black_balloons_popped += 1
-                    elif special_balloon[2] == "pink":
-                        self.score += 10
-                        self.pink_balloons_popped += 1
-
-            self.screen.fill(self.color)
-
-            for balloon in self.balloons:
-                pygame.draw.circle(self.screen, self.balloon_color, (balloon[0], balloon[1]), self.balloon_radius)
-
-            for special_balloon in self.special_balloons:
-                if special_balloon[2] == "black":
-                    pygame.draw.circle(self.screen, (0, 0, 0), (special_balloon[0], special_balloon[1]), self.balloon_radius)
-                elif special_balloon[2] == "pink":
-                    pygame.draw.circle(self.screen, (255, 182, 193), (special_balloon[0], special_balloon[1]), self.balloon_radius)
-
-            pygame.draw.rect(self.screen, (255, 248, 220), (self.player_x, self.player_y, self.player_width, self.player_height))
-
-            pygame.font.init()
-            font = pygame.font.Font(None, 40)
-            text = font.render(f"Puan: {self.score}", True, (248, 248, 255))
-            self.screen.blit(text, (10, 10))
-
-            sure_text = font.render(f"Süre: {int(self.sure)}", True, (248, 248, 255))
-            self.screen.blit(sure_text, (self.screen_width - 120, 10))
-
-            self.sure -= 1 / 60  # Zamanı azalt
-
-            if self.sure <= 0:
-                self.show_result_screen()
-
-            pygame.display.flip()
-            self.clock.tick(60)
-            
-            
-
-        pygame.quit()
-"""
 if __name__ == "__main__":
-    oyun = Oyun(800, 600, 30)  # Ekran genişliği, yüksekliği ve oyun süresi (saniye cinsinden)
-    oyun.main_loop()
-"""
+    meydan_okuma_menu = MeydanOkumaMenu(800, 600, 40)  
+    meydan_okuma_menu.root.mainloop()

@@ -3,13 +3,13 @@ import sys
 from tkinter import Button, Label, font
 import tkinter as tk
 
-
 from IPython.terminal.pt_inputhooks import tk
 
 from Oyun import Oyun
 from gpt import  *
 from Magaza import run_store
 from MeydanOkuma import *
+from Oyun import score 
 
 
 class AnaMenu:
@@ -49,8 +49,9 @@ class AnaMenu:
 
     def open_meydan_okuma(self):
         self.root.destroy()
-        meydan_okuma = MeydanOkuma(800,600, 30)
-        meydan_okuma.main_loop()  
+        self.main_loop()
+        meydan_okuma = MeydanOkumaMenu(800,600, 30)
+    
     
     def open_magaza(self):
      self.root.destroy()

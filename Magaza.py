@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import Button, Label, messagebox
 from Oyun import *
-
+from Oyun import score
 
 class BalanceObserver:
     def update_balance(self, new_balance):
@@ -83,6 +83,9 @@ class StorePage(tk.Frame, BalanceObserver):
             self.wallet.update_balance(-item_price)
             self.balance_label.config(text=f"Bakiye: {self.wallet.get_balance()}")
 
+            # Satın alındıktan sonra arka planı değiştir
+            self.master.configure(bg="#00FF00")  # Örnek olarak yeşil renk
+
             difficulty_level = "Kolay" if difficulty == 1 else ("Orta" if difficulty == 2 else "Zor")
             success_message = f"BAŞARIYLA SATIN ALINDI! \n"\
                               f"SATIN ALINAN NESNENİN PUANI: {item_price}\n"\
@@ -92,7 +95,6 @@ class StorePage(tk.Frame, BalanceObserver):
             messagebox.showinfo("BAŞARI", success_message)
         else:
             messagebox.showerror("HATA", "YETERSİZ BAKİYE! DAHA FAZLA PUAN KAZANIN...")
-
 def run_store():
     root = tk.Tk()
     root.title("Mağaza")
