@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import Button, Label, messagebox
 from Oyun import *
 
+
 class BalanceObserver:
     def update_balance(self, new_balance):
         pass

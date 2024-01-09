@@ -32,6 +32,8 @@ class AnaMenu:
         self.magaza_button.pack(pady=25)
         self.cikis_button.pack(pady=25)
 
+        self.oyun_puan = 0
+
     def build(self):
         self.title_label = tk.Label(self.root, text="Hoşgeldiniz", font=("Helvetica", 20))
         self.title_label.pack(pady=20)
@@ -42,11 +44,11 @@ class AnaMenu:
 
     def start_game(self):
         self.root.destroy()
-        oyun = Oyun(800, 600)
+        oyun = Oyun(800, 600, self)
         oyun.main_loop()
 
     def open_meydan_okuma(self):
-        self.main_loop()
+        self.root.destroy()
         meydan_okuma = MeydanOkuma(800,600, 30)
         meydan_okuma.main_loop()  
     
@@ -54,11 +56,14 @@ class AnaMenu:
      self.root.destroy()
      run_store()
 
+    def close_main_menu(self):
+        self.root.destroy()
+
 
     def main_loop(self):
         self.root.mainloop()
 
-   
+
 ana_menu = AnaMenu()
 ana_menu.main_loop()
 

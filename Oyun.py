@@ -4,13 +4,14 @@ import tkinter as tk
 import pygame
 from soundManager import SoundManager
 
+
 #Sesi kontrol etmek için kullanılan Singleton Tasarım Sınıfının nesnesi
 sound_manager = SoundManager()
 
 score = 0
 
 class Oyun:
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height, ana_menu):
         self.screen_width = screen_width
         self.screen_height = screen_height    
         self.screen = pygame.display.set_mode((screen_width, screen_height))
@@ -19,7 +20,7 @@ class Oyun:
         self.pink_balloon_counter = 0  # Yeni sayaç ekleyin
         self.max_pink_balloons = 3  # İstenilen maksimum pembe balon sayısını ayarlayın
 
-
+        self.ana_menu = ana_menu
 
         self.color = (0, 128, 128)
         self.balloon_radius = 30
@@ -173,10 +174,17 @@ class Oyun:
             self.clock.tick(60)
 
         pygame.quit()
+        #self.ana_menu.show_main_menu(self.score)
+
+def clean_up(self):
+    pygame.quit()
+
+
 
 from AnaMenu import *
-def show_main_menu(self):
+def show_main_menu(self, oyun_puan = 0):
     self.root.destroy()
     ana_menu = AnaMenu()
+    ana_menu.oyun_puan = oyun_puan
     ana_menu.build()
     ana_menu.main_loop()
