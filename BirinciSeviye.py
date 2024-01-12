@@ -3,7 +3,7 @@ import pygame
 from soundManager import SoundManager
 from tkinter import messagebox
 
-# Sesi kontrol etmek için kullanılan Singleton Tasarım Sınıfının nesnesi
+# Ses kontrolü
 sound_manager = SoundManager()
 
 
