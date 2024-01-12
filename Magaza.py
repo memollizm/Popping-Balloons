@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import Label, messagebox
 import random
 
+
+# Gözlemci (Observer) tasarım deseni kullaılmıştır. 
+
 class BalanceObserver:
     def update_balance(self, new_balance):
         pass
@@ -83,7 +86,7 @@ def run_store():
     root.geometry("800x600")
     root.configure(bg="#008080")
 
-    user_wallet = Wallet(initial_balance=16000)
+    user_wallet = Wallet(initial_balance=500)
 
     store_items = {
         "Nesne 1": (20, 1),
@@ -99,11 +102,6 @@ def run_store():
 
 if __name__ == "__main__":
     run_store()
-
-
-
-# Gözlemci (Observer) tasarım deseni kullaılmıştır. 
-# Kullanıcının cüzdan bakiyesindeki herhangi bir değişikliği takip etmek isteyen nesneleri (gözlemcileri) mağaza sayfasına eklemek ve bu değişiklikleri anında almak için kullanılır.
 
 from AnaMenu import *
 def show_main_menu(self):
