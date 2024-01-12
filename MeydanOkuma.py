@@ -74,5 +74,5 @@ class MeydanOkumaMenu:
             self.seviye_stratejisi.baslat()
 
 if __name__ == "__main__":
-    meydan_okuma_menu = MeydanOkumaMenu(800, 600, 40)  
+    meydan_okuma_menu = MeydanOkumaMenu(800, 600, 400)  
     meydan_okuma_menu.root.mainloop()
