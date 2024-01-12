@@ -9,6 +9,8 @@ sound_manager = SoundManager()
 
 score = 0
 
+# Balon renkleri için Flyweight Tasarım Kalıbı kullanıldı
+
 class BalloonFlyweight:
     def __init__(self, color, score):
         self.color = color
@@ -217,11 +219,9 @@ class Oyun:
             self.clock.tick(60)
 
         pygame.quit()
-        #self.ana_menu.show_main_menu(self.score)
 
 def clean_up(self):
     pygame.quit()
-        
         
 
 if __name__ == "__main__":
