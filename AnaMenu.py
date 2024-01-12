@@ -11,7 +11,7 @@ from Oyun import Oyun
 
 from Magaza import run_store
 from MeydanOkuma import *
-from Oyun import score 
+
 
 
 class AnaMenu:
