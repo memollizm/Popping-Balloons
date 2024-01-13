@@ -1,5 +1,7 @@
 import pygame
 
+# Singleton tasarım deseni kullanılmıştır.
+
 class SoundManager:
     _instance = None
 
@@ -24,14 +26,3 @@ class SoundManager:
 
     def play_ice_sound(self):
         self.ice_sound.play()
-"""
-Bu sınıfta Singleton tasarım deseni kullanılmıştır.
-Ses yönetimini tek bir noktadan düzenleniyor
-Böylece ses dosyalarını yüklemek için gereksiz tekrarları önlüyoruz.
-
-#Singleton kalıbı kullanılmadan önce ses dosyaları bu şekilde çağırılıyordu.
-pygame.mixer.init()
-self.normalBalon_sound = pygame.mixer.Sound("ses\\yt5s.io - Balloon Pop Sound effect (320 kbps).mp3")
-self.siyahBalon_sound = pygame.mixer.Sound("ses\\yt5s.io - Breaking glass sound effect (320 kbps).mp3")
-
-"""
